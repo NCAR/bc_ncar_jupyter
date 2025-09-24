@@ -9,6 +9,7 @@ cluster:
 form:
   - auto_accounts
   - mode
+  - working_dir
   - bc_num_hours
   - node_type
   - gpus
@@ -68,6 +69,12 @@ attributes:
     options:
       - ["Jupyter Lab", "1"]
       - ["Jupyter Notebook", "0"]
+  working_dir:
+    widget: "path_selector"
+    label: "Root Directory"
+    data-target-file-type: dirs  # Valid values are: files, dirs, or both
+    readonly: false
+    help: "Select your project directory; defaults to $HOME"
   num_cores:
     widget: "number_field"
     label: "Number of cores"
