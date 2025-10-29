@@ -5,6 +5,7 @@
 
 An interactive app designed for OSC OnDemand that launches a Jupyter
 server within an Owens batch job.
+Modified to work on NCAR HPC systems.
 
 ## Prerequisites
 
