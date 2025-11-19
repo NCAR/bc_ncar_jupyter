@@ -19,10 +19,10 @@ module load <%= context.cuda_version %>
 cd "${NOTEBOOK_ROOT}"
 
 # Setup Jupyter environment
-module load project/ondemand app_jupyter/<%= context.jupyter_version %>
-
+module load conda
+conda activate npl
 module list
-export JUPYTER_PATH="${PWD}/share/jupyter:${OSC_JUPYTER_PATH}"
+#export JUPYTER_PATH="${PWD}/share/jupyter:${OSC_JUPYTER_PATH}"
 
 echo "TTT - $(date)"
 
@@ -34,4 +34,4 @@ echo "TTT - $(date)"
 
 # Launch the Jupyter server
 set -x
-jupyter <%= context.mode == "1" ? 'lab' : 'notebook' %> --config="${CONFIG_FILE}"
+jupyter lab --config="${CONFIG_FILE}"

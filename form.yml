@@ -2,74 +2,19 @@
 cluster:
   - "casper"
 form:
-  - auto_accounts
-  - mode
-  - working_dir
+  - resource
+  - bc_account
   - bc_num_hours
-  - node_type
   - gpus
   - cuda_version
   - num_cores
-  - jupyter_version
   - bc_email_on_started
 attributes:
-  jupyter_version:
+  resource:
     widget: 'select'
     options:
-      - [
-          '4.1.5', '4.1.5',
-          data-option-for-cluster-kubernetes: false,
-          data-option-for-cluster-kubernetes-test: false,
-          data-option-for-cluster-kubernetes-dev: false,
-        ]
-      - [
-          '3.1.18', '3.1.18',
-          data-option-for-cluster-ascend: false,
-          data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-pitzer: false,
-        ]
-      - [
-          '3.0.17', '3.0.17',
-          data-option-for-cluster-ascend: false,
-          data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-pitzer: false,
-        ]
-      - [
-          '2.3.2', '2.3.2',
-          data-option-for-cluster-ascend: false,
-          data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-pitzer: false,
-        ]
-      - [
-          '2.2.10', '2.2.10',
-          data-option-for-cluster-ascend: false,
-          data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-pitzer: false,
-        ]
-      - [
-          '1.2.21', '1.2.21',
-          data-option-for-cluster-ascend: false,
-          data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-pitzer: false,
-        ]
-      - [
-          '0.35.6', '0.35.6',
-          data-option-for-cluster-ascend: false,
-          data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-pitzer: false,
-        ]
-  mode:
-    widget: "radio"
-    value: "1"
-    options:
-      - ["Jupyter Lab", "1"]
-      - ["Jupyter Notebook", "0"]
-  working_dir:
-    widget: "path_selector"
-    label: "Root Directory"
-    show_hidden: false
-    show_files: false   # Only display directories
-    help: "Select your project directory; defaults to $HOME"
+      - [ 'Casper login', 'jhublogin' ]
+      - [ 'Casper PBS batch', 'casper' ]
   num_cores:
     widget: "number_field"
     label: "Number of cores"
@@ -91,19 +36,23 @@ attributes:
       - [ 'Load from custom kernel', 'none' ]
       - [
           "cuda/11.8.0",   "cuda/11.8.0",
-          data-option-for-cluster-cardinal: false,
+          data-option-for-cluster-casper: true,
         ]
       - [
           "cuda/12.2.1",   "cuda/12.2.1",
-          data-option-for-cluster-cardinal: false,
+          data-option-for-cluster-casper: true,
         ]
       - [
           "cuda/12.3.2",   "cuda/12.3.2",
-          data-option-for-cluster-pitzer: false,
-          data-option-for-cluster-ascend: false,
-          data-option-for-kubernetes: false,
-          data-option-for-kubernetes-dev: false,
-          data-option-for-kubernetes-test: false,
+          data-option-for-cluster-casper: true,
+        ]
+      - [
+          "cuda/12.8.0",   "cuda/12.8.0",
+          data-option-for-cluster-casper: true,
+        ]
+      - [
+          "cuda/12.9.0",   "cuda/12.9.0",
+          data-option-for-cluster-casper: true,
         ]
   node_type:
     widget: select
