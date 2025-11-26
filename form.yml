@@ -3,7 +3,7 @@ cluster:
   - "casper"
 form:
   - resource
-  - bc_account
+  - account
   - bc_num_hours
   - gpus
   - cuda_version
@@ -15,6 +15,14 @@ attributes:
     options:
       - [ 'Casper login', 'jhublogin' ]
       - [ 'Casper PBS batch', 'casper' ]
+  account:
+    label: "Account"
+    widget: select
+    help: "Select the account to charge for this job."
+    options:
+      <%- CustomAccounts.accounts.each do |account| %>
+      - "<%= account.strip %>"
+      <%- end %>
   num_cores:
     widget: "number_field"
     label: "Number of cores"
