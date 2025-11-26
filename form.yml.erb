@@ -22,7 +22,7 @@ attributes:
     options:
       <%- CustomAccounts.accounts.each do |account| %>
       - "<%= account.strip %>"
-      <%- end %>
+    <%- end %>
   num_cores:
     widget: "number_field"
     label: "Number of cores"
