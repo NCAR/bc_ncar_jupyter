@@ -5,6 +5,8 @@ batch_connect:
     - jupyter_api
 script:
   queue_name: <%= resource %>
+  accounting_id: <%= account %>
+  walltime: <%= bc_num_hours %>:00:00
   native:
     - "-l"
-    - "select=1:ncpus=2:mem=10G"
+    - "select=1:ncpus=<%= num_cores %>:mem=10G"
