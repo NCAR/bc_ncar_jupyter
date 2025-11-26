@@ -19,10 +19,40 @@ module load <%= context.cuda_version %>
 cd "${NOTEBOOK_ROOT}"
 
 # Setup Jupyter environment
-module load conda
-conda activate npl
-module list
-#export JUPYTER_PATH="${PWD}/share/jupyter:${OSC_JUPYTER_PATH}"
+# module load conda
+# conda activate npl
+# module list
+export NCAR_JUPYTERHUB_PREFIX="/ncar/usr/jupyterhub.hpc.ucar.edu"
+export NCAR_JUPYTERHUB_INSTANCE="stable"
+[ -f /opt/cray/etc/release/cos ] && { export NCAR_OS='suse' ; export NCAR_RESOURCE='derecho' ; export NCAR_JUPYTERHUB_PREFIX="/glade/u/ssg/ch/usr/jupyterhub.hpc.ucar.edu" ; }
+JUPYTER_PATH=${JUPYTER_PATH}:${NCAR_JUPYTERHUB_PREFIX}/${NCAR_JUPYTERHUB_INSTANCE}/share/jupyter:${NCAR_JUPYTERHUB_PREFIX}/share:
+export JUPYTER_PATH
+
+# Should we source the conda site file here instead of in the actual script. If
+# we did it here, then then we wouldn't have to edit the spawner configurations
+# as much and could likely reduce environment divergence.
+CONDA_SETUP_FILE="${NCAR_JUPYTERHUB_PREFIX}/${NCAR_JUPYTERHUB_INSTANCE}/etc/profile.d/conda.sh"
+[ -f ${CONDA_SETUP_FILE} ] && . ${CONDA_SETUP_FILE}
+[ "function" = $(type -t conda) ] && conda activate base
+
+# Set the MEM_LIMIT environment variable dynamically for the
+# jupyter-resource-usage JupyterLab extension
+if [ ! -z "${PBS_JOBID}" ]; then
+    export MEM_LIMIT=$(cat /sys/fs/cgroup/memory/pbs_jobs.service/jobid/${PBS_JOBID}/memory.limit_in_bytes)
+else
+    # Set a 4GB limit on RSS
+    # Do not set an AS limit w/o talking to Jared
+    prlimit --pid $$ --rss=4294967296:4294967296
+    export MEM_LIMIT=$(prlimit --pid $$ --rs --noheadings --output HARD)
+fi
+
+# If things go bad, look here ...
+# module purge &>/dev/null
+env | grep -e JPY -e JUPYTER -e ^PATH -e PYTHON -e python | sort
+# unset PYTHONSTARTUP
+
+# If a user wants to override the default configurations pre-server start.
+[ -f ~/.jupyterhub ] && . ~/.jupyterhub
 
 echo "TTT - $(date)"
 
