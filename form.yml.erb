@@ -3,260 +3,129 @@ cluster:
   - "casper"
 form:
   - resource
-  - account
+  - custom_queue
+  - bc_account
+  - num_nodes
+  - bc_num_slots
+  - threads
+  - mpiprocs
+  - memory
+  - num_gpus
+  - gpu_type
   - bc_num_hours
-  - gpus
-  - cuda_version
-  - num_cores
+  - jupyter_env
   - bc_email_on_started
 attributes:
   resource:
+    label: 'Resource Selection'
     widget: 'select'
     options:
-      - [ 'Casper login', 'jhublogin' ]
-      - [ 'Casper PBS batch', 'casper' ]
-  account:
-    label: "Account"
-    widget: select
+      - [ 'Casper login', 'jhublogin',
+	data-hide-custom-queue: true,
+	data-set-custom-queue: 'jhublogin',
+	data-hide-num-nodes: true,
+	data-set-num-nodes: 1,
+	data-hide-bc-num-slots: true,
+	data-set-bc-num-slots: 2,
+	data-hide-threads: true,
+	data-set-threads: 1,
+	data-hide-mpiprocs: true,
+	data-set-mpi-procs: 1,
+	data-hide-memory: true,
+	data-set-memory: 10,
+        data-hide-enable-gpus: true,
+        data-set-enable-gpus: 0,
+	data-hide-num-gpus: true,
+	data-set-num-gpus: 0,
+	data-hide-gpu-type: true,
+	data-hide-bc-num-hours: true,
+	data-set-bc-num-hours: 720,
+	data-hide-jupyter-env: true,
+	data-set-jupyter-env: 'base' ]
+      - [ 'Casper PBS batch', 'casper_batch' ]
+  custom_queue:
+    widget: 'select'
+    label: "Queue or Reservation (-q)"
+    options:
+      <%- CustomQueues.queues.each do |queue| %>
+      - "<%= queue.strip %>"
+    <%- end %>
+  bc_account:
+    label: "Project Account (-A)"
+    widget: 'select'
     help: "Select the account to charge for this job."
     options:
       <%- CustomAccounts.accounts.each do |account| %>
       - "<%= account.strip %>"
     <%- end %>
-  num_cores:
-    widget: "number_field"
-    label: "Number of cores"
-    value: 1
-    help: |
-      Number of cores on node type. Minimums and maximums will change
-      depending on the choice of node type and cluster.
+  num_nodes:
+    label: "Specify N Nodes (-l select=N)"
+    widget: 'number_field'
+    placeholder: "Recommended: 1"
     min: 1
-    max: 28
-    step: 1
-  cuda_version:
-    widget: "select"
-    label: "CUDA Version"
-    help: |
-      CUDA is Nvidia's GPU-specific parallel computing framework. A GPU node
-      is required to make use of this functionality.  **Load from custom kernel**
-      means you have loaded the appropriate module in your own user defined kernel.
-    options:
-      - [ 'Load from custom kernel', 'none' ]
-      - [
-          "cuda/11.8.0",   "cuda/11.8.0",
-          data-option-for-cluster-casper: true,
-        ]
-      - [
-          "cuda/12.2.1",   "cuda/12.2.1",
-          data-option-for-cluster-casper: true,
-        ]
-      - [
-          "cuda/12.3.2",   "cuda/12.3.2",
-          data-option-for-cluster-casper: true,
-        ]
-      - [
-          "cuda/12.8.0",   "cuda/12.8.0",
-          data-option-for-cluster-casper: true,
-        ]
-      - [
-          "cuda/12.9.0",   "cuda/12.9.0",
-          data-option-for-cluster-casper: true,
-        ]
-  node_type:
-    widget: select
-    label: "Node type"
-    help: |
-      * TODO: Update node descriptions for NCAR clusters *
-      - **Standard Compute** <br>
-        These are standard HPC machines. Owens has 648 of these nodes with 40
-        cores and 128 GB of memory. Pitzer has 224 of these nodes with 40 cores and
-        340 of these nodes with 48 cores. All pitzer nodes have 192 GB of RAM. Chosing "any" as the node type will decrease
-        your wait time.
-      - **GPU Enabled** <br>
-        These are HPC machines with GPUs. Owens has 160 nodes with 1 [NVIDIA Tesla P100 GPU]
-        and Pitzer has 74 nodes with 2 [NVIDIA Tesla V100 GPUs]. They have the same
-        CPU and memory characteristics of standard compute. However, Pitzer's 40 core machines
-        have 2 GPUs with 16 GB of RAM; and Pitzer's 48 core machines have 2 GPUs with 32 GB of RAM.
-        Dense GPU types have 4 GPUs with 16 GB of RAM.
-      - **Large Memory** <br>
-        These are HPC machines with very large amounts of memory. Owens has 16 hugemem nodes
-        with 48 cores and 1.5 TB of RAM. Pitzer has 4 hugemem nodes with 3 TB of RAM and 80 cores.
-        Pitzer also has 12 Largmem nodes which have 48 cores with 768 GB of RAM.
-
-      [NVIDIA Tesla P100 GPU]: http://www.nvidia.com/object/tesla-p100.html
-      [NVIDIA Tesla V100 GPUs]: https://www.nvidia.com/en-us/data-center/v100/
-    options:
-      - [
-          "any",     "any",
-          data-hide-cuda-version: true,
-          data-set-cuda-version: '',
-          data-hide-gpus: true,
-          data-min-num-cores-for-cluster-casper: 1,
-          data-max-num-cores-for-cluster-casper: 48,
-          data-option-for-cluster-casper: true,
-        ]
-      # - [
-      #     "40 core",     "any-40core",
-      #     data-hide-cuda-version: true,
-      #     data-set-cuda-version: '',
-      #     data-hide-gpus: true,
-      #     data-min-num-cores-for-cluster-pitzer: 1,
-      #     data-max-num-cores-for-cluster-pitzer: 40,
-      #     data-option-for-cluster-kubernetes: false,
-      #     data-option-for-cluster-kubernetes-test: false,
-      #     data-option-for-cluster-kubernetes-dev: false,
-      #     data-option-for-cluster-ascend: false,
-      #     data-option-for-cluster-cardinal: false,
-      #   ]
-      # - [
-      #     "48 core",     "any-48core",
-      #     data-hide-cuda-version: true,
-      #     data-set-cuda-version: '',
-      #     data-hide-gpus: true,
-      #     data-min-num-cores-for-cluster-pitzer: 1,
-      #     data-max-num-cores-for-cluster-pitzer: 48,
-      #     data-option-for-cluster-kubernetes: false,
-      #     data-option-for-cluster-kubernetes-test: false,
-      #     data-option-for-cluster-kubernetes-dev: false,
-      #     data-option-for-cluster-ascend: false,
-      #     data-option-for-cluster-cardinal: false,
-      #   ]
-      # - [
-      #     "any gpu",     "gpu",
-      #     data-min-num-cores-for-cluster-pitzer: 1,
-      #     data-max-num-cores-for-cluster-pitzer: 48,
-      #     data-option-for-cluster-kubernetes: false,
-      #     data-option-for-cluster-kubernetes-test: false,
-      #     data-option-for-cluster-kubernetes-dev: false,
-      #     data-min-num-cores-for-cluster-ascend: 1,
-      #     data-max-num-cores-for-cluster-ascend: 118,
-      #     data-min-num-cores-for-cluster-cardinal: 1,
-      #     data-max-num-cores-for-cluster-cardinal: 96,
-      #   ]
-      # - [
-      #     "40 core gpu",     "gpu-40core",
-      #     data-min-num-cores-for-cluster-pitzer: 1,
-      #     data-max-num-cores-for-cluster-pitzer: 40,
-      #     data-option-for-cluster-kubernetes: false,
-      #     data-option-for-cluster-kubernetes-test: false,
-      #     data-option-for-cluster-kubernetes-dev: false,
-      #     data-option-for-cluster-ascend: false,
-      #     data-option-for-cluster-cardinal: false,
-      #   ]
-      # - [
-      #     "48 core gpu",     "gpu-48core",
-      #     data-min-num-cores-for-cluster-pitzer: 1,
-      #     data-max-num-cores-for-cluster-pitzer: 48,
-      #     data-option-for-cluster-kubernetes: false,
-      #     data-option-for-cluster-kubernetes-test: false,
-      #     data-option-for-cluster-kubernetes-dev: false,
-      #     data-option-for-cluster-ascend: false,
-      #     data-option-for-cluster-cardinal: false,
-      #   ]
-      # - [
-      #     "largemem", "largemem",
-      #     data-hide-cuda-version: true,
-      #     data-set-cuda-version: '',
-      #     data-hide-gpus: true,
-      #     data-min-num-cores-for-cluster-pitzer: 24,
-      #     data-max-num-cores-for-cluster-pitzer: 48,
-      #     data-option-for-cluster-kubernetes: false,
-      #     data-option-for-cluster-kubernetes-test: false,
-      #     data-option-for-cluster-kubernetes-dev: false,
-      #     data-option-for-cluster-ascend: false,
-      #     data-option-for-cluster-cardinal: false,
-      #   ]
-      # - [
-      #     "hugemem", "hugemem",
-      #     data-hide-cuda-version: true,
-      #     data-set-cuda-version: '',
-      #     data-hide-gpus: true,
-      #     data-min-num-cores-for-cluster-pitzer: 20,
-      #     data-max-num-cores-for-cluster-pitzer: 80,
-      #     data-option-for-cluster-kubernetes: false,
-      #     data-option-for-cluster-kubernetes-test: false,
-      #     data-option-for-cluster-kubernetes-dev: false,
-      #     data-option-for-cluster-ascend: false,
-      #     data-option-for-cluster-cardinal: false,
-      #   ]
-      # - [
-      #     "debug",   "debug",
-      #     data-hide-cuda-version: true,
-      #     data-set-cuda-version: '',
-      #     data-hide-gpus: true,
-      #     data-min-num-cores-for-cluster-pitzer: 1,
-      #     data-max-num-cores-for-cluster-pitzer: 48,
-      #     data-option-for-cluster-kubernetes: false,
-      #     data-option-for-cluster-kubernetes-test: false,
-      #     data-option-for-cluster-kubernetes-dev: false,
-      #     data-option-for-cluster-ascend: false,
-      #     data-option-for-cluster-cardinal: false,
-      #   ]
-      # - [
-      #     "pitzer",   "pitzer",
-      #     data-hide-cuda-version: true,
-      #     data-set-cuda-version: '',
-      #     data-hide-gpus: true,
-      #     data-min-num-cores-for-cluster-kubernetes: 1,
-      #     data-max-num-cores-for-cluster-kubernetes: 10,
-      #     data-min-num-cores-for-cluster-kubernetes-test: 1,
-      #     data-max-num-cores-for-cluster-kubernetes-test: 10,
-      #     data-min-num-cores-for-cluster-kubernetes-dev: 1,
-      #     data-max-num-cores-for-cluster-kubernetes-dev: 6,
-      #     data-option-for-cluster-pitzer: false,
-      #     data-option-for-cluster-ascend: false,
-      #     data-option-for-cluster-cardinal: false,
-      #   ]
-      # - [
-      #     "owens",   "owens",
-      #     data-hide-cuda-version: true,
-      #     data-set-cuda-version: '',
-      #     data-hide-gpus: true,
-      #     data-min-num-cores-for-cluster-kubernetes: 1,
-      #     data-max-num-cores-for-cluster-kubernetes: 10,
-      #     data-min-num-cores-for-cluster-kubernetes-test: 1,
-      #     data-max-num-cores-for-cluster-kubernetes-test: 10,
-      #     data-min-num-cores-for-cluster-kubernetes-dev: 1,
-      #     data-max-num-cores-for-cluster-kubernetes-dev: 6,
-      #     data-option-for-cluster-pitzer: false,
-      #     data-option-for-cluster-ascend: false,
-      #     data-option-for-cluster-cardinal: false,
-      #   ]
-      # - [
-      #     "pitzer gpu",   "pitzer-gpu",
-      #     data-min-num-cores-for-cluster-kubernetes: 1,
-      #     data-max-num-cores-for-cluster-kubernetes: 10,
-      #     data-min-num-cores-for-cluster-kubernetes-test: 1,
-      #     data-max-num-cores-for-cluster-kubernetes-test: 10,
-      #     data-min-num-cores-for-cluster-kubernetes-dev: 1,
-      #     data-max-num-cores-for-cluster-kubernetes-dev: 6,
-      #     data-option-for-cluster-pitzer: false,
-      #     data-option-for-cluster-ascend: false,
-      #     data-option-for-cluster-cardinal: false,
-      #   ]
-      # - [
-      #     "owens gpu",   "owens-gpu",
-      #     data-min-num-cores-for-cluster-kubernetes: 1,
-      #     data-max-num-cores-for-cluster-kubernetes: 10,
-      #     data-min-num-cores-for-cluster-kubernetes-test: 1,
-      #     data-max-num-cores-for-cluster-kubernetes-test: 10,
-      #     data-min-num-cores-for-cluster-kubernetes-dev: 1,
-      #     data-max-num-cores-for-cluster-kubernetes-dev: 6,
-      #     data-option-for-cluster-pitzer: false,
-      #     data-option-for-cluster-ascend: false,
-      #     data-option-for-cluster-cardinal: false,
-      #   ]
-      # - [
-      #     "80 GB gpu",   "quad-gpu",
-      #     data-option-for-cluster-kubernetes: false,
-      #     data-option-for-cluster-kubernetes-test: false,
-      #     data-option-for-cluster-kubernetes-dev: false,
-      #     data-option-for-cluster-pitzer: false,
-      #     data-option-for-cluster-cardinal: false,
-      #     data-min-num-cores-for-cluster-ascend: 1,
-      #     data-max-num-cores-for-cluster-ascend: 118,
-      #   ]
-  gpus:
-    widget: number_field
-    min: 0
     max: 4
+    value: 1 # Default
+  bc_num_slots:
+    widget: "number_field"
+    label: "Specify N CPUs per Node (-l ncpus=N)"
+    min: 1
+    max: 72
+    value: 1 # Default
+  threads:
+    label: "Specify Threads per Process (-l ompthreads=N)"
+    widget: "number_field"
+    min: 1
+    max: 2
+    value: 1 # Default
+  mpiprocs:
+    label: "Specify MPI processes per Node (-l mpiprocs=N)"
+    widget: "number_field"
+    min: 1
+    max: 72
+    value: 1 # Default
+  memory:
+    label: "Specify Memory per Node in GB (-l mem=N)"
+    widget: "number_field"
+    min: 1
+    max: 1494
+    value: 4 # Default
+  num_gpus:
+    label: "Specify X Number of GPUs / Node (-l ngpus=X)"
+    widget: 'number_field'
+    min: 0
+    max: 8
+    value: 0 # Default
+  gpu_type:
+    label: "Select GPU Type, X (-l gpu_type=X)"
+    widget: 'select'
+    options:
+      - ["NVIDIA Compute Capability 7.0", "cc70"]
+      - ["NVIDIA Compute Capability 8.0", "cc80"]
+      - ["NVIDIA Compute Capability 9.0", "cc90"]
+      - ["Any NVIDIA GPGPU", "nvgpu"]
+      - ["NVIDIA V100 SXM 4-way", "v100_4way"]
+      - ["NVIDIA V100 SXM 8-way", "v100_8way"]
+      - ["NVIDIA A100 PCIe 1-way", "a100_1way"]
+      - ["NVIDIA A100 SXM 4-way", "a100_4way"]
+      - ["NVIDIA A100 80GB 4-way", "a100_80gb"]
+      - ["NVIDIA H100 SXM 4-way", "h100_4way"]
+      - ["NVIDIA H100 80GB", "h100_80gb"]
+      - ["Any AMD GPGPU", "amdgpu"]
+      - ["AMD MI300a", "mi300a"]
+      - ["Visualization - ANY Vis GPU", "vis"]
+      - ["Visualization - NVIDIA GP100", "gp100"]
+      - ["Visualization - NVIDIA L40", "l40"]
+      - ["AI Inference - NVIDIA L40", "l40"]
+  bc_num_hours:
+    label: "Wall Time in hours (24-hour max)"
+    widget: 'number_field'
+    min: 1
+    max: 24
+    value: 1 # Default
+  jupyter_env:
+    label: "Jupyter Environment"
+    widget: 'select'
+    options:
+      - "Base"
+      - "Vapor2"
+      - "VAPOR-3.10"

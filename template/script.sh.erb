@@ -8,25 +8,39 @@ echo "TTT - $(date)"
 #
 
 # Clean the environment
-module purge
-
-# Required modules
-<%- unless context.cuda_version.empty? || context.cuda_version == 'none' -%>
-module load <%= context.cuda_version %>
-<%- end -%>
+#module purge
 
 # Set working directory to notebook root directory
 cd "${NOTEBOOK_ROOT}"
 
-# Setup Jupyter environment
-# module load conda
-# conda activate npl
-# module list
-export NCAR_JUPYTERHUB_PREFIX="/ncar/usr/jupyterhub.hpc.ucar.edu"
+export PAGER='cat'
+export LMOD_PAGER='cat'
+export NCAR_JUPYTERHUB_PREFIX="/glade/u/apps/jupyterhub/"
 export NCAR_JUPYTERHUB_INSTANCE="stable"
-[ -f /opt/cray/etc/release/cos ] && { export NCAR_OS='suse' ; export NCAR_RESOURCE='derecho' ; export NCAR_JUPYTERHUB_PREFIX="/glade/u/ssg/ch/usr/jupyterhub.hpc.ucar.edu" ; }
-JUPYTER_PATH=${JUPYTER_PATH}:${NCAR_JUPYTERHUB_PREFIX}/${NCAR_JUPYTERHUB_INSTANCE}/share/jupyter:${NCAR_JUPYTERHUB_PREFIX}/share:
+grep -i opensuse /etc/os-release > /dev/null && { export NCAR_OS='opensuse' ; export NCAR_RESOURCE='casper' ; }
+[ -f /opt/cray/etc/release/cos ] && { export NCAR_OS='suse' ; export NCAR_RESOURCE='derecho' ; }
+# Source the site scripts hopefully, loosely emulate a login shell, but hopefully not the users' rc/init
+. /etc/profile
+# Make kernels available to the user. Specifically CSG supported kernels that
+# are outside of the tree.It may be advantageous to remove the DEFAULT Python
+# through the base environment. It's not a full environment, but still useful
+# in many instances.
+if [ "dev" = "${NCAR_JUPYTERHUB_INSTANCE}" ]
+then
+    NCAR_JUPYTER_PATH=${NCAR_JUPYTERHUB_PREFIX}/csg-managed/${NCAR_JUPYTERHUB_INSTANCE}
+    JUPYTER_PATH=${JUPYTER_PATH}:${NCAR_JUPYTER_PATH}
+else
+    NCAR_JUPYTER_PATH=${NCAR_JUPYTERHUB_PREFIX}/csg-managed/prod
+    JUPYTER_PATH=${JUPYTER_PATH}:${NCAR_JUPYTERHUB_PREFIX}/${NCAR_JUPYTERHUB_INSTANCE}/share/jupyter:${NCAR_JUPYTER_PATH}
+fi
 export JUPYTER_PATH
+export DASK_DISTRIBUTED__DASHBOARD__LINK="/node/${HOST}/${port}/status"
+
+# Make sure PBS is sourced properly:
+[ -f "/etc/profile.d/pbs.sh" ] && . /etc/profile.d/pbs.sh
+
+module restore
+{ grep casper <<< "x$PBS_JOBID" && module load texlive; } >&/dev/null
 
 # Should we source the conda site file here instead of in the actual script. If
 # we did it here, then then we wouldn't have to edit the spawner configurations
@@ -38,7 +52,12 @@ CONDA_SETUP_FILE="${NCAR_JUPYTERHUB_PREFIX}/${NCAR_JUPYTERHUB_INSTANCE}/etc/prof
 # Set the MEM_LIMIT environment variable dynamically for the
 # jupyter-resource-usage JupyterLab extension
 if [ ! -z "${PBS_JOBID}" ]; then
+    if [ "$NCAR_RESOURCE" = "casper" ]
+    then
     export MEM_LIMIT=$(cat /sys/fs/cgroup/memory/pbs_jobs.service/jobid/${PBS_JOBID}/memory.limit_in_bytes)
+    else
+    export MEM_LIMIT=$(cat /sys/fs/cgroup/memory/pbs_jobs.service/jobid/${PBS_JOBID}/memory.limit_in_bytes)
+    fi
 else
     # Set a 4GB limit on RSS
     # Do not set an AS limit w/o talking to Jared

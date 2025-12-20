@@ -4,9 +4,9 @@ batch_connect:
   conn_params:
     - jupyter_api
 script:
-  queue_name: <%= resource %>
-  accounting_id: <%= account %>
-  walltime: <%= bc_num_hours %>:00:00
+  # Walltime set automatically by bc_num_hours
+  # Account set automatically by bc_account
+  queue_name: <%= custom_queue %>
   native:
     - "-l"
-    - "select=1:ncpus=<%= num_cores %>:mem=10G"
+    - "select=<%= num_nodes %>:ncpus=<%= bc_num_slots %>:mpiprocs=<%= mpiprocs %>:ompthreads=<%= threads %>:mem=<%= memory %>GB<% if num_gpus.to_i > 0 %>:ngpus=<%= num_gpus %>:gpu_type=<%= gpu_type %><% end %>"
