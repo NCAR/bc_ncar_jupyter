@@ -42,7 +42,9 @@ attributes:
 	data-set-bc-num-hours: 720,
 	data-hide-jupyter-env: true,
 	data-set-jupyter-env: 'base' ]
-      - [ 'Casper PBS batch', 'casper_batch' ]
+      - [ 'Casper PBS batch', 'casper_batch',
+        data-set-custom-queue: 'casper',
+        data-set-bc-num-hours: 1 ]
   custom_queue:
     widget: 'select'
     label: "Queue or Reservation (-q)"
