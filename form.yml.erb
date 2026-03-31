@@ -53,6 +53,9 @@ attributes:
       <%- CustomQueues.queues.each do |queue| %>
       - "<%= queue.strip %>"
     <%- end %>
+      - [ 'jhublogin', 'jhublogin',
+          data-exclusive-option-for-resource-jhublogin: true
+        ]
   bc_account:
     label: "Project Account (-A)"
     widget: 'select'
