@@ -1,6 +1,7 @@
 ---
 cluster:
   - "casper"
+  - "derecho"
 form:
   - resource
   - custom_queue
@@ -46,6 +47,9 @@ attributes:
       - [ 'Casper PBS batch', 'casper_batch',
           data-set-custom-queue: 'casper',
           data-set-bc-num-hours: 1 ]
+      - [ 'Derecho PBS batch', 'derecho_batch',
+          data-set-custom-queue: 'main',
+          data-set-bc-num-hours: 1 ]
   custom_queue:
     widget: 'select'
     label: "Queue or Reservation (-q)"
@@ -53,6 +57,7 @@ attributes:
       <%- CustomQueues.queues.each do |queue| %>
       - "<%= queue.strip %>"
     <%- end %>
+      - "main"
   bc_account:
     label: "Project Account (-A)"
     widget: 'select'
