@@ -73,13 +73,13 @@ attributes:
     options:
       <%- CustomAccounts.accounts["cr"].each do |account| %>
        - [
-         "<%= account.strip %> Casper", "<%= account.strip %>",
+         "<%= account.strip %>", "<%= account.strip %>",
          data-option-for-cluster-derecho: false
          ]
     <%- end %>
       <%- CustomAccounts.accounts["de"].each do |account| %>
        - [
-         "<%= account.strip %> Derecho", "<%= account.strip %>",
+         "<%= account.strip %>", "<%= account.strip %>",
          data-option-for-cluster-casper: false
          ]
     <%- end %>
