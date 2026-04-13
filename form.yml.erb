@@ -1,6 +1,7 @@
 ---
 cluster:
   - "casper"
+  - "derecho"
 form:
   - resource
   - custom_queue
@@ -21,6 +22,7 @@ attributes:
     widget: 'select'
     options:
       - [ 'Casper login', 'jhublogin',
+          data-exclusive-option-for-cluster-casper: true,
           data-hide-custom-queue: true,
           data-set-custom-queue: 'jhublogin',
           data-hide-num-nodes: true,
@@ -44,14 +46,24 @@ attributes:
           data-hide-jupyter-env: true,
           data-set-jupyter-env: 'base' ]
       - [ 'Casper PBS batch', 'casper_batch',
+          data-exclusive-option-for-cluster-casper: true,
           data-set-custom-queue: 'casper',
+          data-set-bc-num-hours: 1 ]
+      - [ 'Derecho PBS batch', "derecho_batch",
+          data-exclusive-option-for-cluster-derecho: true,
+          data-set-custom-queue: 'main',
           data-set-bc-num-hours: 1 ]
   custom_queue:
     widget: 'select'
     label: "Queue or Reservation (-q)"
     options:
-      <%- CustomQueues.queues.each do |queue| %>
-      - "<%= queue.strip %>"
+      <%- CustomQueues.queues["cr"].each do |queue| %>
+      - [ "<%= queue.strip %>", "<%= queue.strip %>",
+          data-exclusive-option-for-cluster-casper: true ]
+    <%- end %>
+      <%- CustomQueues.queues["de"].each do |queue| %>
+      - [ "<%= queue.strip %>", "<%= queue.strip %>",
+          data-exclusive-option-for-cluster-derecho: true ]
     <%- end %>
       - [ 'jhublogin', 'jhublogin',
           data-exclusive-option-for-resource-jhublogin: true
@@ -61,8 +73,17 @@ attributes:
     widget: 'select'
     help: "Select the account to charge for this job."
     options:
-      <%- CustomAccounts.accounts.each do |account| %>
-      - "<%= account.strip %>"
+      <%- CustomAccounts.accounts["cr"].each do |account| %>
+       - [
+         "<%= account.strip %>", "<%= account.strip %>",
+         data-option-for-cluster-derecho: false
+         ]
+    <%- end %>
+      <%- CustomAccounts.accounts["de"].each do |account| %>
+       - [
+         "<%= account.strip %>", "<%= account.strip %>",
+         data-option-for-cluster-casper: false
+         ]
     <%- end %>
   num_nodes:
     label: "Specify N Nodes (-l select=N)"
