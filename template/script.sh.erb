@@ -34,7 +34,8 @@ else
     JUPYTER_PATH=${JUPYTER_PATH}:${NCAR_JUPYTERHUB_PREFIX}/${NCAR_JUPYTERHUB_INSTANCE}/share/jupyter:${NCAR_JUPYTER_PATH}
 fi
 export JUPYTER_PATH
-export DASK_DISTRIBUTED__DASHBOARD__LINK="/node/${HOST}/${port}/status"
+export FQDN=`hostname -f`
+export DASK_DISTRIBUTED__DASHBOARD__LINK="/node/${FQDN}/${port}/proxy/{port}/status"
 
 # Make sure PBS is sourced properly:
 [ -f "/etc/profile.d/pbs.sh" ] && . /etc/profile.d/pbs.sh

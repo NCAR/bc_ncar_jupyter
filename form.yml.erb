@@ -65,7 +65,9 @@ attributes:
       - [ "<%= queue.strip %>", "<%= queue.strip %>",
           data-exclusive-option-for-cluster-derecho: true ]
     <%- end %>
-      - "main"
+      - [ 'jhublogin', 'jhublogin',
+          data-exclusive-option-for-resource-jhublogin: true
+        ]
   bc_account:
     label: "Project Account (-A)"
     widget: 'select'
