@@ -48,7 +48,7 @@ module restore
 # as much and could likely reduce environment divergence.
 CONDA_SETUP_FILE="${NCAR_JUPYTERHUB_PREFIX}/${NCAR_JUPYTERHUB_INSTANCE}/etc/profile.d/conda.sh"
 [ -f ${CONDA_SETUP_FILE} ] && . ${CONDA_SETUP_FILE}
-[ "function" = $(type -t conda) ] && conda activate base
+[ "function" = $(type -t conda) ] && conda activate <%= jupyter_env %>
 
 # Set the MEM_LIMIT environment variable dynamically for the
 # jupyter-resource-usage JupyterLab extension
