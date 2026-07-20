@@ -53,16 +53,18 @@ export USER_SHELL=${USER_SHELL:-/bin/bash}
 umask 077
 cat > "${CONFIG_FILE}" << EOL
 c.KernelSpecManager.ensure_native_kernel = False
-c.NotebookApp.ip = '*'
-c.NotebookApp.port = ${port}
-c.NotebookApp.base_url = '/node/${host}/${port}/'
-c.NotebookApp.port_retries = 0
-c.NotebookApp.password = u'sha1:${SALT}:${PASSWORD_SHA1}'
-c.NotebookApp.open_browser = False
-c.NotebookApp.allow_origin = '*'
-c.NotebookApp.notebook_dir = '${NOTEBOOK_ROOT}'
-c.NotebookApp.disable_check_xsrf = True
-c.NotebookApp.terminado_settings = { "shell_command": ["${USER_SHELL}"] }
+c.ServerApp.ip = '*'
+c.ServerApp.port = ${port}
+c.ServerApp.base_url = '/node/${host}/${port}/'
+c.ServerApp.port_retries = 0
+c.ServerApp.password = u'sha1:${SALT}:${PASSWORD_SHA1}'
+c.ServerApp.open_browser = False
+c.ServerApp.allow_origin = '*'
+# Set the root to / so users can easily get to things like /gdex
+c.ServerApp.root_dir = '/'
+# Set the preferred starting directory to the users home
+c.FileContentsManager.preferred_dir = '$HOME'
+c.ServerApp.disable_check_xsrf = True
 c.ServerApp.terminado_settings = { "shell_command": ["${USER_SHELL}"] }
 EOL
 )
