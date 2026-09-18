@@ -50,11 +50,13 @@ attributes:
           data-exclusive-option-for-cluster-casper: true,
           data-set-custom-queue: 'casper',
           data-max-bc-num-slots: 72,
+          data-max-bc-num-hours: 24,
           data-set-bc-num-hours: 1 ]
       - [ 'Derecho PBS batch', "derecho_batch",
           data-exclusive-option-for-cluster-derecho: true,
           data-set-custom-queue: 'main',
           data-max-bc-num-slots: 128,
+          data-max-bc-num-hours: 24,
           data-set-bc-num-hours: 1 ]
   custom_queue:
     widget: 'select'
