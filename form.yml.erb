@@ -28,8 +28,8 @@ attributes:
           data-set-custom-queue: 'jhublogin',
           data-hide-num-nodes: true,
           data-set-num-nodes: 1,
-          data-hide-bc-num-slots: true,
-          data-set-bc-num-slots: 2,
+          data-max-bc-num-slots: 2,
+          data-set-bc-num-slots: 1,
           data-hide-threads: true,
           data-set-threads: 1,
           data-hide-mpiprocs: true,
@@ -49,10 +49,14 @@ attributes:
       - [ 'Casper PBS batch', 'casper_batch',
           data-exclusive-option-for-cluster-casper: true,
           data-set-custom-queue: 'casper',
+          data-max-bc-num-slots: 72,
+          data-max-bc-num-hours: 24,
           data-set-bc-num-hours: 1 ]
       - [ 'Derecho PBS batch', "derecho_batch",
           data-exclusive-option-for-cluster-derecho: true,
           data-set-custom-queue: 'main',
+          data-max-bc-num-slots: 128,
+          data-max-bc-num-hours: 24,
           data-set-bc-num-hours: 1 ]
   custom_queue:
     widget: 'select'

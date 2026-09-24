@@ -69,3 +69,6 @@ c.ServerApp.terminado_settings = { "shell_command": ["${USER_SHELL}"] }
 c.FileContentsManager.delete_to_trash = False
 EOL
 )
+
+# Enable job control to allow foreground processes to respond to SIGINT therefore Ctrl-C works
+set -m
