@@ -44,17 +44,18 @@ attributes:
           data-hide-bc-num-hours: true,
           data-set-bc-num-hours: 720,
           data-max-bc-num-hours: 720,
-          data-hide-jupyter-env: true,
-          data-set-jupyter-env: 'base' ]
+          data-set-jupyter-env: '/glade/u/apps/ondemand/jlab-26.07' ]
       - [ 'Casper PBS batch', 'casper_batch',
           data-exclusive-option-for-cluster-casper: true,
           data-set-custom-queue: 'casper',
+          data-set-jupyter-env: '/glade/u/apps/ondemand/jlab-26.07',
           data-max-bc-num-slots: 72,
           data-max-bc-num-hours: 24,
           data-set-bc-num-hours: 1 ]
       - [ 'Derecho PBS batch', "derecho_batch",
           data-exclusive-option-for-cluster-derecho: true,
           data-set-custom-queue: 'main',
+          data-set-jupyter-env: '/glade/u/apps/ondemand/jlab-26.07',
           data-max-bc-num-slots: 128,
           data-max-bc-num-hours: 24,
           data-set-bc-num-hours: 1 ]
@@ -158,10 +159,10 @@ attributes:
     label: "Jupyter Environment"
     widget: 'select'
     options:
-      - ["Base", "base"]
+      - ["JupyterLab 4.6.1(default)", "/glade/u/apps/ondemand/jlab-26.07"]
+      - ["JupyterLab 4.0.8", "base"]
       - ["Vapor2", "/glade/u/apps/jupyterhub/envs/dev/vapor2"]
       - ["VAPOR-3.10", "/glade/u/apps/jupyterhub/envs/dev/vapor-3.10"]
       <%- if is_dev -%>
       - ["Base updated", "/glade/u/apps/ondemand/jh-23.11.1"]
-      - ["JupyterLab 26.07", "/glade/u/apps/ondemand/jlab-26.07"]
       <%- end -%>
